@@ -1,7 +1,7 @@
 import csv
 
-NUM_CATEGORIAL_FEATURES = 28
-INPUT_CSV_FILE = 'combined-15k-dataset.csv'
+NUM_CATEGORIAL_FEATURES = 21	#TOTAL number of columns, including score label
+INPUT_CSV_FILE = '15k-dataset-raw.csv'
 OUTPUT_CSV_FILE = 'processed_data.csv'
 
 feature_index_vector = [0] * NUM_CATEGORIAL_FEATURES
