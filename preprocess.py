@@ -1,8 +1,12 @@
 import csv
 
 NUM_CATEGORIAL_FEATURES = 21	#TOTAL number of columns, including score label
-INPUT_CSV_FILE = '15k-dataset-raw.csv'
-OUTPUT_CSV_FILE = 'processed_data.csv'
+TRAIN_INPUT_CSV_FILE = 'training-movies-raw.csv'
+TRAIN_OUTPUT_CSV_FILE = 'training-movies.csv'
+TEST_INPUT_CSV_FILE = 'upcoming-movies-test-raw.csv'
+TEST_OUTPUT_CSV_FILE = 'upcoming-movies-test.csv'
+PREDICT_INPUT_CSV_FILE = 'upcoming-movies-predict-raw.csv'
+PREDICT_OUTPUT_CSV_FILE = 'upcoming-movies-predict.csv'
 
 feature_index_vector = [0] * NUM_CATEGORIAL_FEATURES
 feature_dict_vector = [{} for index in range(NUM_CATEGORIAL_FEATURES)]
@@ -65,23 +69,50 @@ def vectorize(csv_row, output_writer):
 '''
 Driver that creates CSV writer objects and calls vectorize()
 '''
-with open(INPUT_CSV_FILE, 'rb') as data_file:
+with open(TRAIN_INPUT_CSV_FILE, 'rb') as data_file:
 	data_reader = csv.reader(data_file)
-	output_file = open(OUTPUT_CSV_FILE, "wb")
+	output_file = open(TRAIN_OUTPUT_CSV_FILE, "wb")
 	output_writer = csv.writer(output_file)
 	first_row_raw = next(data_reader)
-	# print "First row type: " + str(type(first_row))
-	# print "First row contents: "
-	# for i in range(len(first_row)):
-	# 	print first_row[i]
 	first_row_clean = [feature for feature in first_row_raw]
-
-	output_writer.writerow(first_row_clean)	# Write header row immediately to output file
+	output_writer.writerow(first_row_clean)	# Write header row to output file
 
 	row_i = 1
 
 	for row in data_reader:
-		print 'row_i = ' + str(row_i)
+		print 'TRAINING row = ' + str(row_i)
 		vectorize(row, output_writer)
 		row_i += 1
 	output_file.close()
+
+with open(TEST_INPUT_CSV_FILE, 'rb') as test_input_file:
+	test_data_reader = csv.reader(test_input_file)
+	test_output_file = open(TEST_OUTPUT_CSV_FILE, "wb")
+	test_output_writer = csv.writer(test_output_file)
+	first_row_raw = next(test_data_reader)
+	first_row_clean = [feature for feature in first_row_raw]
+	test_output_writer.writerow(first_row_clean)	# Write header row to output file
+
+	row_i = 1
+
+	for row in test_data_reader:
+		print 'TESTING row = ' + str(row_i)
+		vectorize(row, test_output_writer)
+		row_i += 1
+	test_output_file.close()
+
+with open(PREDICT_INPUT_CSV_FILE, 'rb') as predict_input_file:
+	predict_data_reader = csv.reader(predict_input_file)
+	predict_output_file = open(PREDICT_OUTPUT_CSV_FILE, "wb")
+	predict_output_writer = csv.writer(predict_output_file)
+	first_row_raw = next(predict_data_reader)
+	first_row_clean = [feature for feature in first_row_raw]
+	predict_output_writer.writerow(first_row_clean)	# Write header row to output file
+
+	row_i = 1
+
+	for row in predict_data_reader:
+		print 'PREDICTING row = ' + str(row_i)
+		vectorize(row, predict_output_writer)
+		row_i += 1
+	predict_output_file.close()
