@@ -1,3 +1,11 @@
+.metadata/
+.recommenders/
+.settings/
+RemoteSystemsTempFiles/
+
+*.html
+*.ser
+
 *.class
 *.log
 

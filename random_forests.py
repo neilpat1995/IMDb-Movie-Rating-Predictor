@@ -1,5 +1,5 @@
 from __future__ import print_function
-from sklearn import linear_model
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
@@ -7,7 +7,7 @@ import csv
 INPUT_CSV_FILE = 'processed_data.csv'
 NUM_FEATURES = 21
 RATING_COLUMN_INDEX = 20
-TESTING_SET_PERCENTAGE = 10
+TESTING_SET_PERCENTAGE = 1
 
 '''
 Load training and testing data into numpy arrays
@@ -46,63 +46,35 @@ movies_X_train = movies_X[0:training_set_size, :]
 movies_X_test = movies_X[training_set_size:, :]
 #print "X_test len: " + str(len(movies_X_test))
 
+movies_Y = np.ravel(movies_Y) #Convert column vector to expected 1D array  
+
 movies_Y_train = movies_Y[0:training_set_size]
 #print "Y_train len: " + str(len(movies_Y_train)) 
 movies_Y_test = movies_Y[training_set_size:]
 #print "Y_test len: " + str(len(movies_Y_test))
 
-# Create linear regression model
-regr_model = linear_model.LinearRegression()
-
-# Train model
-regr_model.fit(movies_X_train, movies_Y_train)
+#Create and train classifier
+rf_float_regressor = RandomForestRegressor(n_estimators=20, min_samples_split=5)
+rf_float_regressor.fit(movies_X_train, movies_Y_train)
 
 print('===== RESULTS WITH FLOATING-POINT LABELS =====')
 
-# The coefficients
-print('Coefficients: \n', regr_model.coef_)
-# The mean squared error
-print("Mean squared error: %.3f"
-      % np.mean((regr_model.predict(movies_X_test) - movies_Y_test) ** 2))
-# Explained variance score: 1 is perfect prediction
-print('Variance score: %.3f' % regr_model.score(movies_X_test, movies_Y_test))
+#Get prediction accuracy
+float_preds = rf_float_regressor.score(movies_X_test, movies_Y_test)	# ideally 1.0
+print('Predictions with floating point labels: %.3f' % float_preds)
 
-# predicted_labels = regr_model.predict(movies_X_test)
-# print('predicted_labels:')
-# for i in range(25):
-# 	print(predicted_labels[i])
-
-# Re-run logistic regression model with integer labels
+# Re-run model with integer labels
 movies_Y_train = [int(round(label)) for label in movies_Y_train]
 movies_Y_test = [int(round(label)) for label in movies_Y_test]
 
 # Create new model
-regr_model_int_labels = linear_model.LinearRegression()
+rf_int_classifier = RandomForestClassifier(n_estimators=20, min_samples_split=5)
 
 # Train new model
-regr_model_int_labels.fit(movies_X_train, movies_Y_train)
+rf_int_classifier.fit(movies_X_train, movies_Y_train)
 
 print('===== RESULTS WITH ROUNDED INTEGER LABELS =====')
-# The coefficients
-print('Coefficients: \n', regr_model_int_labels.coef_)
-# The mean squared error
-print("Mean squared error: %.3f"
-      % np.mean((regr_model_int_labels.predict(movies_X_test) - movies_Y_test) ** 2))
-# Explained variance score: 1 is perfect prediction
-print('Variance score: %.3f' % regr_model_int_labels.score(movies_X_test, movies_Y_test))
 
-# predicted_labels = regr_model_int_labels.predict(movies_X_test)
-# print('predicted_labels:')
-# for i in range(25):
-# 	print(predicted_labels[i])
-
-
-# Plot outputs
-# plt.scatter(movies_X_test, movies_Y_test,  color='black')
-# plt.plot(movies_X_test, regr_model.predict(movies_X_test), color='blue',
-#          linewidth=3)
-
-# plt.xticks(())
-# plt.yticks(())
-
-# plt.show()
+#Get prediction accuracy
+int_preds = rf_int_classifier.score(movies_X_test, movies_Y_test)
+print('Predictions with integer labels: %.3f' % int_preds)
