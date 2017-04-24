@@ -12,9 +12,10 @@ from sklearn.model_selection import GridSearchCV
 TRAINING_CSV_FILE = 'training-movies.csv'
 TESTING_CSV_FILE = 'upcoming-movies-test.csv'
 PREDICTION_CSV_FILE = 'upcoming-movies-predict.csv'
+MODEL_PREDICTIONS_FILE = 'upcoming-movies-model-predictions.csv'
 
 NUM_FEATURES = 21 	#Number of features for each sample, INCLUDING rating label. 
-RATING_COLUMN_INDEX = 20
+RATING_COLUMN_INDEX = 19
 
 '''
 Load training data into numpy arrays.
@@ -27,22 +28,25 @@ with open(TRAINING_CSV_FILE, 'rb') as data_file:
 train_movies_X = np.empty([num_rows, NUM_FEATURES-1])
 train_movies_Y = np.empty([num_rows, 1])
 
+# train_csv = np.genfromtxt(TRAINING_CSV_FILE, delimiter=",", dtype=None)
+# labels = train_csv[:,RATING_COLUMN_INDEX]
+# print("TRAINING LABELS: ")
+# for label in np.nditer(labels):
+# 	print(label)
+
 with open(TRAINING_CSV_FILE, 'rb') as data_file:
 	data_file_reader = csv.reader(data_file)
 	for index, row in enumerate(data_file_reader):
 		if (index == 0):	#Skip header row
 			continue
-		features = [float(row[i]) for i in range(NUM_FEATURES) if i != RATING_COLUMN_INDEX]
-		label = float(row[RATING_COLUMN_INDEX])
-		
+		#features = [float(row[i]) for i in range(NUM_FEATURES) if i != RATING_COLUMN_INDEX]
+		#label = float(row[RATING_COLUMN_INDEX])
+		if (index )
+
+
 		#Append to training features and labels arrays
 		train_movies_X[index] = features
 		train_movies_Y[index] = label
-
-# movies_X_train = movies_X[0:training_set_size, :]
-# #print "X_train len: " + str(len(movies_X_train))
-# movies_X_test = movies_X[training_set_size:, :]
-# #print "X_test len: " + str(len(movies_X_test))
 
 '''
 Load testing dataset in numpy arrays.
@@ -67,6 +71,34 @@ with open(TESTING_CSV_FILE, 'rb') as test_file:
 		test_movies_X[index] = features
 		test_movies_Y[index] = label
 
+'''
+Load predicting dataset in numpy arrays.
+'''
+with open(PREDICTION_CSV_FILE, 'rb') as predict_file:
+	predict_data_reader = csv.reader(predict_file)
+	predict_data = list(predict_data_reader)
+	num_predict_samples = len(predict_data)
+
+predict_movies_X = np.empty([num_predict_samples, NUM_FEATURES-1])
+
+with open(PREDICTION_CSV_FILE, 'rb') as predict_file:
+	predict_data_reader = csv.reader(predict_file)
+	for index, row in enumerate(predict_data_reader):
+		if (index == 0):
+			continue
+		features = [float(row[i]) for i in range(NUM_FEATURES) if i != RATING_COLUMN_INDEX]
+
+		#Append to testing features and labels arrays
+		predict_movies_X[index] = features
+
+'''
+Prepare writer to write to predictions output file.
+Currently writes predictions for non-CV classifier ONLY 
+'''
+predictions_output_file = open(MODEL_PREDICTIONS_FILE, "wb")
+pred_out_writer = csv.writer(predictions_output_file)
+
+
 # Convert column vectors of labels to expected 1D array 
 train_movies_Y = np.ravel(train_movies_Y)  
 test_movies_Y = np.ravel(test_movies_Y)
@@ -80,18 +112,27 @@ print('===== RESULTS WITH FLOATING-POINT LABELS =====')
 float_preds = rf_float_regressor.score(test_movies_X, test_movies_Y)
 print('Testing prediction accuracy (no cross-validation): %.3f' % float_preds)
 
+
+
 '''
 cv_rf_float_regressor = RandomForestRegressor(n_estimators=20, min_samples_split=5)
-cv_float_preds = cross_val_score(cv_rf_float_regressor, movies_X, movies_Y, cv=5)
+cv_float_preds = cross_val_score(cv_rf_float_regressor, train_movies_X, train_movies_Y, cv=5)
 print("Prediction accuracy (cross-validation): %0.2f (+/- %0.2f)" % (cv_float_preds.mean(), cv_float_preds.std() * 2))
 '''
-
-
 
 print('===== RESULTS WITH ROUNDED INTEGER LABELS =====')
 #Compute rounded label values
 train_movies_Y = [int(round(label)) for label in train_movies_Y]
 test_movies_Y = [int(round(label)) for label in test_movies_Y]
+
+print(type(train_movies_Y))
+print(type(test_movies_Y))
+
+#int_train = open('int_train_labels.txt', "wb")
+#int_train.write(train_movies_Y.tostring())
+
+#int_test = open('int_test_labels.txt', "wb")
+#int_test.write(test_movies_Y.tostring())
 
 # Create new model (regular and CV classifiers)
 rf_int_classifier = RandomForestClassifier(n_estimators=20, min_samples_split=5)
@@ -101,6 +142,13 @@ rf_int_classifier = RandomForestClassifier(n_estimators=20, min_samples_split=5)
 rf_int_classifier.fit(train_movies_X, train_movies_Y)
 int_preds = rf_int_classifier.score(test_movies_X, test_movies_Y)
 print('Testing prediction accuracy (no cross-validation): %.3f' % int_preds)
+
+pred_labels = rf_int_classifier.predict(predict_movies_X)
+# print("NOW IN PREDICTION SET")
+# print(pred_labels.shape)
+for pred in np.nditer(pred_labels):
+	#print(str(pred))
+	pred_out_writer.writerow(pred)
 
 # CV model
 # movies_Y = [int(round(label)) for label in movies_Y] # Round entire label set

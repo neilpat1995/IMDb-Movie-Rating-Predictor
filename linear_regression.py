@@ -4,15 +4,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv
 
-INPUT_CSV_FILE = 'processed_data.csv'
+TRAINING_CSV_FILE = 'training-movies.csv'
+TESTING_CSV_FILE = 'upcoming-movies-test.csv'
+PREDICTION_CSV_FILE = 'upcoming-movies-predict.csv'
+MODEL_PREDICTIONS_FILE = 'upcoming-movies-model-predictions.csv'
 NUM_FEATURES = 21
-RATING_COLUMN_INDEX = 20
-TESTING_SET_PERCENTAGE = 10
+RATING_COLUMN_INDEX = 19
+TESTING_SET_PERCENTAGE = 1
 
 '''
 Load training and testing data into numpy arrays
 '''
-with open(INPUT_CSV_FILE, 'rb') as data_file:
+with open(TRAINING_CSV_FILE, 'rb') as data_file:
 	data_file_reader = csv.reader(data_file)
 	data = list(data_file_reader)
 	num_rows = len(data)
@@ -20,7 +23,7 @@ with open(INPUT_CSV_FILE, 'rb') as data_file:
 movies_X = np.empty([num_rows, NUM_FEATURES-1])
 movies_Y = np.empty([num_rows, 1])
 
-with open(INPUT_CSV_FILE, 'rb') as data_file:
+with open(TRAINING_CSV_FILE, 'rb') as data_file:
 	data_file_reader = csv.reader(data_file)
 	for index, row in enumerate(data_file_reader):
 		if (index == 0):

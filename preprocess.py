@@ -8,6 +8,9 @@ TEST_OUTPUT_CSV_FILE = 'upcoming-movies-test.csv'
 PREDICT_INPUT_CSV_FILE = 'upcoming-movies-predict-raw.csv'
 PREDICT_OUTPUT_CSV_FILE = 'upcoming-movies-predict.csv'
 
+MOVIE_TITLE_INDEX = 9
+MOVIE_LINK_INDEX = 14
+
 feature_index_vector = [0] * NUM_CATEGORIAL_FEATURES
 feature_dict_vector = [{} for index in range(NUM_CATEGORIAL_FEATURES)]
 
@@ -38,13 +41,14 @@ def is_number(s):
 
 '''
 Convert movie datum (row from input file) to a well-formed datum, i.e. convert categorical data to numerical data
+Note: Movie name and IMDb link are preserved for display on web application.
 '''
 
 def vectorize(csv_row, output_writer):
-	numerical_row = [] # Well-formed datum to return	
+	numerical_row = [] # Well-formed datum to return
 	for feature_index in range(NUM_CATEGORIAL_FEATURES):
 		csv_row[feature_index].strip().lower()
-		if is_number(csv_row[feature_index]):
+		if (is_number(csv_row[feature_index]) or feature_index in {MOVIE_TITLE_INDEX, MOVIE_LINK_INDEX}):
 			numerical_row.append(csv_row[feature_index])
 		
 		else:
