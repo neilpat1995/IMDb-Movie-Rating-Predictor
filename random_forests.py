@@ -12,7 +12,10 @@ from sklearn.model_selection import GridSearchCV
 TRAINING_CSV_FILE = 'training-movies.csv'
 TESTING_CSV_FILE = 'upcoming-movies-test.csv'
 PREDICTION_CSV_FILE = 'upcoming-movies-predict.csv'
-MODEL_PREDICTIONS_FILE = 'upcoming-movies-model-predictions.csv'
+MODEL_PREDICTIONS_FILE = 'upcoming-movies-forests-predictions.csv'
+
+MOVIE_TITLE_INDEX = 9
+MOVIE_LINK_INDEX = 14
 
 NUM_FEATURES = 21 	#Number of features for each sample, INCLUDING rating label. 
 RATING_COLUMN_INDEX = 19
@@ -25,8 +28,8 @@ with open(TRAINING_CSV_FILE, 'rb') as data_file:
 	data = list(data_file_reader)
 	num_rows = len(data)
 
-train_movies_X = np.empty([num_rows, NUM_FEATURES-1])
-train_movies_Y = np.empty([num_rows, 1])
+train_movies_X = np.empty([num_rows-1, NUM_FEATURES-3])
+train_movies_Y = np.empty([num_rows-1, 1])
 
 # train_csv = np.genfromtxt(TRAINING_CSV_FILE, delimiter=",", dtype=None)
 # labels = train_csv[:,RATING_COLUMN_INDEX]
@@ -39,14 +42,12 @@ with open(TRAINING_CSV_FILE, 'rb') as data_file:
 	for index, row in enumerate(data_file_reader):
 		if (index == 0):	#Skip header row
 			continue
-		#features = [float(row[i]) for i in range(NUM_FEATURES) if i != RATING_COLUMN_INDEX]
-		#label = float(row[RATING_COLUMN_INDEX])
-		if (index )
-
+		features = [row[i] for i in range(NUM_FEATURES) if i not in {RATING_COLUMN_INDEX, MOVIE_TITLE_INDEX, MOVIE_LINK_INDEX}]
+		label = row[RATING_COLUMN_INDEX]
 
 		#Append to training features and labels arrays
-		train_movies_X[index] = features
-		train_movies_Y[index] = label
+		train_movies_X[index-1] = features
+		train_movies_Y[index-1] = label
 
 '''
 Load testing dataset in numpy arrays.
@@ -56,20 +57,20 @@ with open(TESTING_CSV_FILE, 'rb') as test_file:
 	test_data = list(test_data_reader)
 	num_test_samples = len(test_data)
 
-test_movies_X = np.empty([num_test_samples, NUM_FEATURES-1])
-test_movies_Y = np.empty([num_test_samples, 1])
+test_movies_X = np.empty([num_test_samples-1, NUM_FEATURES-3])
+test_movies_Y = np.empty([num_test_samples-1, 1])
 
 with open(TESTING_CSV_FILE, 'rb') as test_file:
 	test_data_reader = csv.reader(test_file)
 	for index, row in enumerate(test_data_reader):
 		if (index == 0):
 			continue
-		features = [float(row[i]) for i in range(NUM_FEATURES) if i != RATING_COLUMN_INDEX]
-		label = float(row[RATING_COLUMN_INDEX])
+		features = [row[i] for i in range(NUM_FEATURES) if i not in {RATING_COLUMN_INDEX, MOVIE_LINK_INDEX, MOVIE_TITLE_INDEX}]
+		label = row[RATING_COLUMN_INDEX]
 
 		#Append to testing features and labels arrays
-		test_movies_X[index] = features
-		test_movies_Y[index] = label
+		test_movies_X[index-1] = features
+		test_movies_Y[index-1] = label
 
 '''
 Load predicting dataset in numpy arrays.
@@ -79,17 +80,17 @@ with open(PREDICTION_CSV_FILE, 'rb') as predict_file:
 	predict_data = list(predict_data_reader)
 	num_predict_samples = len(predict_data)
 
-predict_movies_X = np.empty([num_predict_samples, NUM_FEATURES-1])
+predict_movies_X = np.empty([num_predict_samples-1, NUM_FEATURES-3])
 
 with open(PREDICTION_CSV_FILE, 'rb') as predict_file:
 	predict_data_reader = csv.reader(predict_file)
 	for index, row in enumerate(predict_data_reader):
 		if (index == 0):
 			continue
-		features = [float(row[i]) for i in range(NUM_FEATURES) if i != RATING_COLUMN_INDEX]
+		features = [row[i] for i in range(NUM_FEATURES) if i not in {RATING_COLUMN_INDEX, MOVIE_TITLE_INDEX, MOVIE_LINK_INDEX}]
 
 		#Append to testing features and labels arrays
-		predict_movies_X[index] = features
+		predict_movies_X[index-1] = features
 
 '''
 Prepare writer to write to predictions output file.
@@ -144,11 +145,8 @@ int_preds = rf_int_classifier.score(test_movies_X, test_movies_Y)
 print('Testing prediction accuracy (no cross-validation): %.3f' % int_preds)
 
 pred_labels = rf_int_classifier.predict(predict_movies_X)
-# print("NOW IN PREDICTION SET")
-# print(pred_labels.shape)
 for pred in np.nditer(pred_labels):
-	#print(str(pred))
-	pred_out_writer.writerow(pred)
+	pred_out_writer.writerow([pred.tolist()])
 
 # CV model
 # movies_Y = [int(round(label)) for label in movies_Y] # Round entire label set
