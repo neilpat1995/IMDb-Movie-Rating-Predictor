@@ -31,11 +31,21 @@ public class CombineDatasets {
         	String link = m.movieImdbLink.lastIndexOf("/") == -1 ? m.movieImdbLink : m.movieImdbLink.substring(0, m.movieImdbLink.lastIndexOf("/"));
         	link = "http://www.imdb.com"+link;
         	m.movieImdbLink = link;
+        	m.castTotalFacebookLikes = "0";
         	if(facebookLikes.containsKey(m.directorName)){
         		m.directorFacebookLikes = facebookLikes.get(m.directorName);
         	}
-        	if(facebookLikes.containsKey(m.actor1Name)){
+        	if(!m.actor1Name.equals("") && facebookLikes.containsKey(m.actor1Name)){
         		m.actor1FacebookLikes = facebookLikes.get(m.actor1Name);
+        		m.castTotalFacebookLikes = String.valueOf(Integer.parseInt(m.castTotalFacebookLikes) + Integer.parseInt(m.actor1FacebookLikes));
+        	}
+        	if(m.actor2Name != null && !m.actor2Name.equals("") && facebookLikes.containsKey(m.actor2Name)){
+        		m.actor2FacebookLikes = facebookLikes.get(m.actor2Name);
+        		m.castTotalFacebookLikes = String.valueOf(Integer.parseInt(m.castTotalFacebookLikes) + Integer.parseInt(m.actor2FacebookLikes));
+        	}
+        	if(m.actor3Name != null && !m.actor3Name.equals("") && facebookLikes.containsKey(m.actor3Name)){
+        		m.actor3FacebookLikes = facebookLikes.get(m.actor3Name);
+        		m.castTotalFacebookLikes = String.valueOf(Integer.parseInt(m.castTotalFacebookLikes) + Integer.parseInt(m.actor3FacebookLikes));
         	}
         	
         	if(!combinedMovieList.containsKey(link)){

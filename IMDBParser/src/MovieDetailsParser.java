@@ -36,6 +36,10 @@ public class MovieDetailsParser {
 						}
 						if(detail.attr("itemprop").equals("actors")){
 							movie.actor1Name = detail.select("span.itemprop").first().text();
+							try{
+								movie.actor2Name = credit.select("span").get(2).select("span.itemprop").first().text();
+								movie.actor3Name = credit.select("span").get(4).select("span.itemprop").first().text();
+							} catch (Exception npe){ }
 						}
 					}
 					Element moneyInfo = doc.select("div#titleDetails").first();

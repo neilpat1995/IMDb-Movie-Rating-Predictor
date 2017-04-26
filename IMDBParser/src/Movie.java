@@ -12,6 +12,8 @@ public class Movie implements Serializable {
 	String imdbScore = "";
 	String directorName = "";
 	String actor1Name = "";
+	String actor2Name = "";
+	String actor3Name = "";
 	String duration = "";
 	String budget = "";
 	String contentRating = "";
@@ -19,6 +21,8 @@ public class Movie implements Serializable {
 	String movieFacebookLikes = "";
 	String directorFacebookLikes = "";
 	String actor1FacebookLikes = "";
+	String actor2FacebookLikes = "";
+	String actor3FacebookLikes = "";
 	String castTotalFacebookLikes = "";
 	String facenumberInPoster = "";
 	String gross = "";

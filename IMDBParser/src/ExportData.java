@@ -63,16 +63,16 @@ public class ExportData {
 				} else {
 					if(separateGenres){
 						for(String genre : movie.genres){
-							writeLine(writer, Arrays.asList(movie.directorName, duration, movie.directorFacebookLikes, "", 
-									"", movie.actor1FacebookLikes, gross, genre, movie.actor1Name, movie.movieTitle,
-									movie.castTotalFacebookLikes, "", movie.facenumberInPoster, "", movieLink,
-									movie.contentRating, budget, movie.titleYear, "", movie.imdbScore, movie.movieFacebookLikes));
+							writeLine(writer, Arrays.asList(movie.directorName, duration, movie.directorFacebookLikes, movie.actor3FacebookLikes, 
+									movie.actor2Name, movie.actor1FacebookLikes, gross, genre, movie.actor1Name, movie.movieTitle,
+									movie.castTotalFacebookLikes, movie.actor3Name, movie.facenumberInPoster, "", movieLink,
+									movie.contentRating, budget, movie.titleYear, movie.actor2FacebookLikes, movie.imdbScore, movie.movieFacebookLikes));
 						}
 					} else {
-						writeLine(writer, Arrays.asList(movie.directorName, duration, movie.directorFacebookLikes, "", 
-								"", movie.actor1FacebookLikes, gross, String.join("|", movie.genres), movie.actor1Name, movie.movieTitle,
-								movie.castTotalFacebookLikes, "", movie.facenumberInPoster, "", movieLink,
-								movie.contentRating, budget, movie.titleYear, "", movie.imdbScore, movie.movieFacebookLikes));
+						writeLine(writer, Arrays.asList(movie.directorName, duration, movie.directorFacebookLikes, movie.actor3FacebookLikes, 
+								movie.actor2Name, movie.actor1FacebookLikes, gross, String.join("|", movie.genres), movie.actor1Name, movie.movieTitle,
+								movie.castTotalFacebookLikes, movie.actor3Name, movie.facenumberInPoster, "", movieLink,
+								movie.contentRating, budget, movie.titleYear, movie.actor2FacebookLikes, movie.imdbScore, movie.movieFacebookLikes));
 					}
 				}
 			}
